@@ -597,9 +597,15 @@
   var MIN_MESSAGE = 20;
   var EMAILJS_PUBLIC_KEY = "DAR4iWUwTAr-FKjjZ";
 
-  if (window.emailjs && typeof window.emailjs.init === "function") {
-    window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  function initEmailJs() {
+    if (window.emailjs && typeof window.emailjs.init === "function") {
+      window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+      return true;
+    }
+    return false;
   }
+
+  initEmailJs();
 
   function initContactForm() {
     var form = $("#contact-form");
@@ -760,7 +766,7 @@
       var templateId = (form.getAttribute("data-template-id") || "").trim();
       var endpoint = sanitizeEndpoint(form.getAttribute("data-endpoint") || "");
 
-      if (serviceId && templateId && window.emailjs && typeof window.emailjs.sendForm === "function") {
+      if (serviceId && templateId && initEmailJs() && typeof window.emailjs.sendForm === "function") {
         event.preventDefault();
 
         if (status) {
@@ -768,15 +774,14 @@
           status.className = "form-status";
         }
 
-        var templateParams = {
-          name: fields.name.input ? fields.name.input.value.trim() : "",
-          email: fields.email.input ? fields.email.input.value.trim() : "",
-          subject: fields.subject.input ? fields.subject.input.value.trim() : "",
-          message: fields.message.input ? fields.message.input.value.trim() : "",
-          time: new Date().toLocaleString()
-        };
+        var emailRequest = window.emailjs.sendForm(serviceId, templateId, form);
+        var emailTimeout = new Promise(function (_, reject) {
+          window.setTimeout(function () {
+            reject(new Error("Email service timed out."));
+          }, 15000);
+        });
 
-        window.emailjs.send(serviceId, templateId, templateParams, EMAILJS_PUBLIC_KEY)
+        Promise.race([emailRequest, emailTimeout])
           .then(function () {
             form.reset();
             Object.keys(fields).forEach(function (key) {
@@ -872,7 +877,7 @@
         .catch(function () {
           if (status) {
             status.innerHTML =
-              'Sorry, the message could not be sent. Please email <a href="mailto:[YOUR EMAIL]">[YOUR EMAIL]</a> directly.';
+              'Sorry, the message could not be sent. Please email <a href="mailto:arafatislam2028@gmail.com">arafatislam2028@gmail.com</a> directly.';
             status.className = "form-status is-error";
           }
         });
