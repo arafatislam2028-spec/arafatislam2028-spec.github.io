@@ -1,0 +1,28 @@
+CV PLACEHOLDER
+==============
+
+This file exists only so the "Download CV" button in index.html does not point at a
+missing file.
+
+To finish the setup:
+
+1. Export your own CV as a PDF (one or two pages, A4, filename without spaces).
+2. Name it exactly:  [YOUR-CV].pdf   (or pick your own name).
+3. Save it into this assets/ folder, replacing this placeholder file.
+
+   NOTE: browsers refuse to open a real .pdf containing plain text, so delete this
+   placeholder once the real file is in place.
+
+4. Update the download link in index.html, section #home:
+
+       <a class="btn btn-ghost" href="assets/[YOUR-CV].pdf" download>
+
+   Replace "[YOUR-CV].pdf" with your actual filename, for example:
+
+       <a class="btn btn-ghost" href="assets/jahidul-islam-cv.pdf" download>
+
+   Use the SAME name in capitalisation — file names are case-sensitive on
+   GitHub Pages, Netlify, and Vercel servers even though Windows is not.
+
+5. Optional: add `target="_blank" rel="noopener"` if you would rather the PDF open
+   in a new tab than download.

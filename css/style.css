@@ -1,0 +1,3070 @@
+/* ==========================================================================
+   [YOUR NAME] — Computer Operator & IT Specialist
+   Portfolio stylesheet
+   --------------------------------------------------------------------------
+   Structure
+     1.  Design tokens (CSS variables) — light + dark themes
+     2.  Reset and base
+     3.  Typography
+     4.  Layout primitives (container, section, cards grid)
+     5.  Buttons, badges, links
+     6.  Header and navigation (incl. mobile menu)
+     7.  Hero
+     8.  About
+     9.  Skills + skill visualisation
+     10. Services
+     11. Projects (filter + modal)
+     12. Experience timeline
+     13. Certifications
+     14. Tools
+     15. Why work with me
+     16. Contact + form validation states
+     17. Footer + back-to-top
+     17b. Scroll progress bar + project modal
+     18. Scroll reveal
+     19. Responsive breakpoints
+     --  Mobile: decoration removed, function kept
+     --  Accessibility helpers
+     --  Reduced motion
+     --  Print
+
+   Colour balance: roughly 75% neutral surfaces, 20% secondary surfaces, and
+   5% accent (--accent). The accent is deliberately reserved for interactive
+   and important elements only — buttons, links, focus, indicators, category
+   labels and hover borders.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. DESIGN TOKENS
+   ========================================================================== */
+
+:root {
+  /* --- Base surfaces: tinted slightly towards the blue accent ---------- */
+  --bg: #f6f8fc;
+  --surface: #ffffff;
+  --surface-2: #edf1fa;
+  --surface-3: #e4eafa;
+  --text: #111726;
+  /* Muted text is used for navigation, body copy and captions. It is darkened
+     to #4a5468 so small text clears 4.5:1 on both --bg and --surface. */
+  --muted: #4a5468;
+  --border: #d7deec;
+  --border-strong: #a8b4cd;
+
+  /* --- Primary accent: blue -------------------------------------------- */
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
+  --accent-hover: #1a41b0;
+  --accent-soft: #e4ecfd;
+  --accent-line: rgba(37, 99, 235, 0.38);
+  --accent-glow: rgba(37, 99, 235, 0.16);
+  /* Foreground for text sitting on --accent. White works on the light theme's
+     deep blue; the dark theme overrides this with ink (its accent is light). */
+  --on-accent: #ffffff;
+
+  /* --- Category palette ------------------------------------------------
+     Six hues, each assigned to one knowledge area and reused consistently
+     for its card, icon, tag, project category, and filter chip. This is what
+     makes the site colourful without becoming random: the colour always means
+     the same thing wherever it appears.                                      */
+  --c-blue: #2563eb;
+  --c-blue-soft: #e4ecfd;
+  --c-teal: #0f766e;
+  --c-teal-soft: #d8f3f0;
+  --c-violet: #7c3aed;
+  --c-violet-soft: #ece4fd;
+  --c-amber: #a35a02;
+  --c-amber-soft: #fdeed3;
+  --c-rose: #be185d;
+  --c-rose-soft: #fce4f0;
+  --c-green: #15803d;
+  --c-green-soft: #dcf5e4;
+
+  --success: #15803d;
+  --danger: #c0392f;
+  --danger-soft: #fdecea;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.07);
+  --shadow-md: 0 6px 20px rgba(16, 24, 40, 0.1);
+  --shadow-lg: 0 18px 44px rgba(16, 24, 40, 0.14);
+  --shadow-accent: 0 10px 28px -12px rgba(37, 99, 235, 0.4);
+
+  /* Decorative backgrounds — tinted, and a little more present than before */
+  --grid-line: rgba(37, 99, 235, 0.075);
+  --dot-color: rgba(124, 58, 237, 0.12);
+  --glow-opacity: 0.72;
+
+  /* Elevation on interactive hover (2–5px, never a jump) */
+  --lift: -3px;
+
+  /* Typography */
+  --font-sans:
+    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  --font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+
+  /* Shape and motion */
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-pill: 999px;
+  --transition: 180ms ease;
+  --header-height: 68px;
+}
+
+html[data-theme="dark"] {
+  --bg: #0d1119;
+  --surface: #161c27;
+  --surface-2: #1d2532;
+  --surface-3: #243044;
+  --text: #e9edf6;
+  --muted: #a9b4c8;
+  --border: #2b3648;
+  --border-strong: #3e4b62;
+  --accent: #7ba2ff;
+  --accent-strong: #a4beff;
+  --accent-hover: #9db8ff;
+  --accent-soft: #1b2946;
+  --accent-line: rgba(123, 162, 255, 0.45);
+  --accent-glow: rgba(123, 162, 255, 0.2);
+  --on-accent: #0d1119;
+
+  /* Dark-theme variants of the category palette: brighter, to stay legible on
+     a dark surface, but the same six hues so meaning never changes. */
+  --c-blue: #7ba2ff;
+  --c-blue-soft: #1b2946;
+  --c-teal: #34d3c0;
+  --c-teal-soft: #10312e;
+  --c-violet: #b18cff;
+  --c-violet-soft: #251a44;
+  --c-amber: #f0b74d;
+  --c-amber-soft: #3a2a0f;
+  --c-rose: #ff8ab8;
+  --c-rose-soft: #3a1530;
+  --c-green: #6ede9b;
+  --c-green-soft: #14301f;
+
+  --success: #6ede9b;
+  --danger: #ff9c93;
+  --danger-soft: #351a17;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 18px 44px rgba(0, 0, 0, 0.55);
+  --shadow-accent: 0 10px 28px -12px rgba(123, 162, 255, 0.35);
+
+  --grid-line: rgba(123, 162, 255, 0.08);
+  --dot-color: rgba(177, 140, 255, 0.13);
+  --glow-opacity: 0.9;
+}
+
+/* ==========================================================================
+   CATEGORY COLOUR SYSTEM
+   --------------------------------------------------------------------------
+   Each knowledge area owns one hue, declared once here via a --cat / --cat-soft
+   pair. Every card, icon, tag, category label, and filter chip reads those two
+   variables, so a colour always means the same thing wherever it appears.
+   ========================================================================== */
+
+/* Text-safe shade of each hue: darkened so it clears 4.5:1 on a light card,
+   while the brighter --cat stays for icons, borders and bars where contrast
+   requirements are lower. */
+.cat-blue {
+  --cat: var(--c-blue);
+  --cat-soft: var(--c-blue-soft);
+  --cat-text: #1e40af;
+}
+
+.cat-teal {
+  --cat: var(--c-teal);
+  --cat-soft: var(--c-teal-soft);
+  --cat-text: #0f5c56;
+}
+
+.cat-violet {
+  --cat: var(--c-violet);
+  --cat-soft: var(--c-violet-soft);
+  --cat-text: #5b21b6;
+}
+
+.cat-amber {
+  --cat: var(--c-amber);
+  --cat-soft: var(--c-amber-soft);
+  --cat-text: #8a4a01;
+}
+
+.cat-rose {
+  --cat: var(--c-rose);
+  --cat-soft: var(--c-rose-soft);
+  --cat-text: #9d174d;
+}
+
+.cat-green {
+  --cat: var(--c-green);
+  --cat-soft: var(--c-green-soft);
+  --cat-text: #14532d;
+}
+
+/* Dark theme: the lighter hues already clear 4.5:1 on a dark card, so the
+   brighter decorative shade doubles as the text shade. */
+html[data-theme="dark"] .cat-blue {
+  --cat-text: #9db8ff;
+}
+
+html[data-theme="dark"] .cat-teal {
+  --cat-text: #5fe0d0;
+}
+
+html[data-theme="dark"] .cat-violet {
+  --cat-text: #c4a6ff;
+}
+
+html[data-theme="dark"] .cat-amber {
+  --cat-text: #f5c46a;
+}
+
+html[data-theme="dark"] .cat-rose {
+  --cat-text: #ffa3c8;
+}
+
+html[data-theme="dark"] .cat-green {
+  --cat-text: #8ce6ae;
+}
+
+/* Cards in a category take that hue for their icon, hover border, and reveal
+   line. Falls back to the default accent if no --cat is set. */
+[class*="cat-"] .card-icon {
+  background-color: var(--cat-soft, var(--accent-soft));
+  color: var(--cat, var(--accent));
+}
+
+[class*="cat-"]:hover .card-icon,
+[class*="cat-"]:focus-within .card-icon {
+  background-color: var(--cat, var(--accent));
+  color: #fff;
+}
+
+html[data-theme="dark"] [class*="cat-"]:hover .card-icon,
+html[data-theme="dark"] [class*="cat-"]:focus-within .card-icon {
+  color: #0d1119;
+}
+
+[class*="cat-"]:hover,
+[class*="cat-"]:focus-within {
+  border-color: var(--cat, var(--accent));
+}
+
+[class*="cat-"]::before {
+  background-color: var(--cat, var(--accent));
+}
+
+/* Category label text (project cards) follows the card hue. Small mono text
+   needs the darker shade of the hue to stay above 4.5:1 on a light card. */
+[class*="cat-"] .project-category,
+[class*="cat-"] .service-card h3 {
+  color: var(--cat-text, var(--cat, var(--accent)));
+}
+
+/* Headings and top rules use the category hue where one is set. Card headings
+   are the largest coloured text on the page, so they also use the text-safe
+   shade rather than the brighter decorative one. */
+[class*="cat-"] h3,
+[class*="cat-"] .modal-sub,
+[class*="cat-"] .stat-value {
+  color: var(--cat-text, var(--cat, var(--text)));
+}
+
+/* Tags pick up a hint of the category hue on hover — border only, so the text
+   keeps its full neutral contrast. */
+[class*="cat-"]:hover .tag-list li {
+  border-color: var(--cat, var(--accent));
+}
+
+/* Hero focus badges: coloured text needs the text-safe shade to stay legible. */
+.hero-badges .badge {
+  border-color: var(--cat, var(--border));
+  background-color: var(--cat-soft, var(--surface-2));
+  color: var(--cat-text, var(--muted));
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   2. RESET AND BASE
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* Keeps anchored sections clear of the sticky header. */
+  scroll-padding-top: calc(var(--header-height) + var(--space-4));
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+  display: block;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+figure {
+  margin: 0;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.1em 0.35em;
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================================================
+   3. TYPOGRAPHY
+   ========================================================================== */
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 var(--space-3);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 650;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3.1rem);
+}
+
+h2 {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+}
+
+h3 {
+  font-size: 1.0625rem;
+  font-weight: 650;
+}
+
+p {
+  margin: 0 0 var(--space-4);
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+strong {
+  font-weight: 650;
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.prose > p:last-child,
+.prose > p:last-of-type {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   4. LAYOUT PRIMITIVES
+   ========================================================================== */
+
+.container {
+  width: min(1160px, 100% - 3rem);
+  margin-inline: auto;
+}
+
+.section {
+  position: relative;
+  padding-block: var(--space-9);
+}
+
+/* Section separation without making every section a different colour:
+   alternating tinted surfaces, thin borders, and soft accent washes. */
+.section-alt {
+  background-color: var(--surface-2);
+  border-block: 1px solid var(--border);
+  background-image: linear-gradient(to bottom, rgba(37, 99, 235, 0.05), transparent 180px);
+}
+
+/* Soft multi-hue backdrop for the skills and experience sections. */
+.section--wash {
+  background-image:
+    radial-gradient(60% 55% at 12% 0%, var(--c-teal-soft) 0%, transparent 70%),
+    radial-gradient(50% 45% at 88% 8%, var(--c-violet-soft) 0%, transparent 70%);
+}
+
+/* Services gets a warmer wash to separate it from skills. */
+.section--wash-warm {
+  background-image:
+    radial-gradient(55% 50% at 88% 0%, var(--c-amber-soft) 0%, transparent 70%),
+    radial-gradient(50% 45% at 6% 12%, var(--c-blue-soft) 0%, transparent 72%);
+}
+
+/* Small dotted texture on the projects section. Very low opacity. */
+.section--dots::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--dot-color) 1.4px, transparent 1.4px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.75) 30%, transparent 92%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7) 30%, transparent 90%);
+  pointer-events: none;
+}
+
+.section--dots > .container {
+  position: relative;
+}
+
+/* Contact gets a gentle accent influence, not an accent background. */
+.section--accent-soft {
+  background-image:
+    radial-gradient(90% 80% at 88% 0%, var(--accent-glow), transparent 65%),
+    radial-gradient(70% 60% at 0% 100%, var(--c-teal-soft), transparent 70%);
+}
+
+/* Accent-tinted divider between the kicker and the heading. */
+.section-kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--accent);
+}
+
+.section-kicker::after {
+  content: "";
+  flex: 1 1 auto;
+  max-width: 72px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--c-blue), var(--c-violet), transparent);
+}
+
+/* Secondary (muted) text vs important text: keep the hierarchy explicit. */
+.section-intro strong {
+  color: var(--text);
+}
+
+.section-intro em {
+  color: var(--accent);
+  font-style: normal;
+}
+
+/* Sections are focus targets (tabindex="-1") so skip/jump links land here. */
+.section:focus {
+  outline: none;
+}
+
+.section-head {
+  max-width: 62ch;
+  margin-bottom: var(--space-7);
+}
+
+.section-kicker {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.section-intro {
+  color: var(--muted);
+  margin-bottom: 0;
+}
+
+.small-note {
+  margin-top: var(--space-5);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.cards-grid {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: 1fr;
+}
+
+/* Card ---------------------------------------------------------------- */
+.card {
+  position: relative;
+  background-color: var(--surface);
+  /* A very light diagonal tint keeps cards from reading as flat white. */
+  background-image: linear-gradient(150deg, rgba(37, 99, 235, 0.035) 0%, transparent 55%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition);
+}
+
+/* Cards in a category tint themselves with that hue instead. The .level rows
+   are excluded: they are compact table-like rows where a full-width tint read
+   as banding, so they carry colour on a left rail + the meter instead. */
+[class*="cat-"]:not(.level):not(.timeline-item) {
+  background-image: linear-gradient(150deg, var(--cat-soft, transparent) 0%, transparent 60%);
+}
+
+/* Thin accent line along the top edge, revealed on hover. Purely decorative,
+   so it uses a pseudo-element that never affects layout or the text layer. */
+.card::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: var(--space-5);
+  right: var(--space-5);
+  height: 2px;
+  border-radius: 2px;
+  background-color: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0;
+  transition:
+    transform var(--transition),
+    opacity var(--transition);
+  pointer-events: none;
+}
+
+/* Lift + accent border + stronger shadow. 3px, never a jump or a scale. */
+.card:hover,
+.card:focus-within {
+  transform: translateY(var(--lift));
+  border-color: var(--accent-line);
+  box-shadow: var(--shadow-md);
+}
+
+.card:hover::before,
+.card:focus-within::before {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+.card > :last-child {
+  margin-bottom: 0;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.card-head h3 {
+  margin: 0;
+}
+
+.card-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: var(--radius-sm);
+  background-color: var(--accent-soft);
+  color: var(--accent);
+  transition:
+    background-color var(--transition),
+    color var(--transition),
+    transform var(--transition);
+}
+
+/* Icons brighten and shift a touch when their card is hovered. */
+.card:hover .card-icon,
+.card:focus-within .card-icon {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+html[data-theme="dark"] .card:hover .card-icon,
+html[data-theme="dark"] .card:focus-within .card-icon {
+  color: #0f1319;
+}
+
+/* Per-icon micro-motions. All are 2–3px or a tiny pulse: no spinning. */
+.card:hover .card-icon svg {
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.skill-card:hover .card-icon svg {
+  transform: translateY(-2px);
+}
+
+.skill-card--code:hover .card-icon svg {
+  transform: translateX(3px);
+}
+
+.skill-card--network:hover .card-icon svg {
+  animation: icon-pulse 1.6s ease-in-out infinite;
+}
+
+.skill-card--security:hover .card-icon svg {
+  transform: scale(1.1);
+}
+
+@keyframes icon-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.card-note {
+  margin: var(--space-4) 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ==========================================================================
+   5. BUTTONS, BADGES, LINKS
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px; /* touch target */
+  padding: 0.7rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition),
+    color var(--transition),
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.btn-primary {
+  background-color: var(--accent);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-sm);
+}
+
+html[data-theme="dark"] .btn-primary {
+  color: var(--on-accent);
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+  color: var(--on-accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-accent);
+}
+
+html[data-theme="dark"] .btn-primary:hover {
+  color: var(--on-accent);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background-color: var(--surface);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--muted);
+  padding-inline: var(--space-3);
+}
+
+.btn-ghost:hover {
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+/* Press-down feedback. Takes priority over the hover lift, so a click reads as
+   a real press rather than a jump. */
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.btn:focus-visible {
+  outline-offset: 3px;
+}
+
+/* Icon buttons (theme toggle, mobile menu) ----------------------------- */
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    border-color var(--transition),
+    color var(--transition),
+    background-color var(--transition);
+}
+
+.icon-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Sun shown in dark mode, moon shown in light mode (invites a switch). */
+.theme-toggle .icon-moon,
+html[data-theme="dark"] .theme-toggle .icon-sun {
+  display: none;
+}
+
+html[data-theme="dark"] .theme-toggle .icon-moon {
+  display: block;
+}
+
+/* Mobile menu bars ----------------------------------------------------- */
+.nav-toggle {
+  display: none;
+}
+
+.nav-toggle-bars {
+  display: grid;
+  gap: 4px;
+  width: 18px;
+}
+
+.nav-toggle-bars span {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background-color: currentColor;
+  transition:
+    transform var(--transition),
+    opacity var(--transition);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-bars span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-bars span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-bars span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* Badges --------------------------------------------------------------- */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background-color: var(--surface-2);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.badge-sample {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+/* ==========================================================================
+   6. HEADER AND NAVIGATION
+   ========================================================================== */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: color-mix(in srgb, var(--bg) 90%, transparent);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px) saturate(140%);
+  transition:
+    box-shadow var(--transition),
+    background-color var(--transition);
+}
+
+/* Added by JS once the page is scrolled. */
+.site-header.is-scrolled {
+  box-shadow: var(--shadow-md);
+}
+
+@supports not (background-color: color-mix(in srgb, red 50%, transparent)) {
+  .site-header {
+    background-color: var(--bg);
+  }
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--header-height);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: var(--text);
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: var(--radius-sm);
+  /* Gradient mark: the logo is the first thing that reads as colourful. */
+  background-image: linear-gradient(135deg, var(--c-blue) 0%, var(--c-violet) 100%);
+  background-color: var(--c-blue);
+  /* Dark ink in the dark theme, where both gradient stops are light blues and
+     purples — white initials only reached 2.48:1 against them. */
+  color: var(--on-accent, #fff);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.brand:hover .brand-mark {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-accent);
+}
+
+.brand-text {
+  display: grid;
+  min-width: 0;
+}
+
+.brand-text strong {
+  font-size: 0.9375rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brand-text small {
+  font-size: 0.75rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  position: relative;
+  display: block;
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    color var(--transition),
+    background-color var(--transition);
+}
+
+/* Underline that grows in from the left on hover. */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0.6rem;
+  right: 0.6rem;
+  bottom: 0.15rem;
+  height: 2px;
+  border-radius: 2px;
+  background-color: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--transition);
+}
+
+.nav-link:hover {
+  color: var(--accent);
+  background-color: var(--surface-2);
+}
+
+.nav-link:hover::after,
+.nav-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Active section, set by JS via aria-current="true".
+   Uses --accent-strong rather than --accent: at 14.4px the lighter accent only
+   reaches ~4.3:1 on the header surface, while the stronger shade clears 4.5:1. */
+.nav-link[aria-current="true"] {
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+/* The active item keeps its indicator visible. */
+.nav-link[aria-current="true"]::after {
+  transform: scaleX(1);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+}
+
+/* ==========================================================================
+   7. HERO
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  padding-block: var(--space-8) var(--space-9);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Faint technical grid — supports the content, never competes with it. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  /* Fades out towards the bottom so the grid never fights the text. */
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, transparent 82%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, transparent 82%);
+  pointer-events: none;
+}
+
+/* Two slow, soft accent glows behind the profile image: blue and violet.
+   18s, low opacity, transform only — calm rather than busy. */
+.hero::after {
+  content: "";
+  position: absolute;
+  top: -8%;
+  right: -12%;
+  z-index: -1;
+  width: min(560px, 62vw);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 35%, var(--accent) 0%, transparent 62%),
+    radial-gradient(circle at 70% 65%, var(--c-violet) 0%, transparent 58%);
+  opacity: var(--glow-opacity);
+  filter: blur(78px);
+  pointer-events: none;
+  animation: hero-drift 18s ease-in-out infinite alternate;
+}
+
+/* A second, smaller teal glow in the opposite corner. Kept inside the viewport
+   on small screens by clamping its position, so it never causes a horizontal
+   scrollbar. */
+.hero-glow-teal {
+  position: absolute;
+  bottom: -14%;
+  left: 0;
+  z-index: -1;
+  width: clamp(220px, 40vw, 420px);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c-teal) 0%, transparent 66%);
+  opacity: calc(var(--glow-opacity) * 0.5);
+  filter: blur(88px);
+  pointer-events: none;
+}
+
+@keyframes hero-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(-4%, 5%, 0) scale(1.08);
+  }
+}
+
+.hero-grid {
+  display: grid;
+  gap: var(--space-7);
+  align-items: start;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background-color: var(--surface);
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--success);
+}
+
+.hero h1 {
+  margin-bottom: var(--space-3);
+}
+
+/* Gradient text on the name: the one place where colour carries emphasis. */
+.hero h1 .text-accent {
+  background-image: linear-gradient(96deg, var(--c-blue) 0%, var(--c-violet) 52%, var(--c-teal) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* Fallback for engines without background-clip: text. */
+  -webkit-text-fill-color: transparent;
+}
+
+@supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+  .hero h1 .text-accent {
+    color: var(--accent);
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+.hero-roles {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin-bottom: var(--space-5);
+}
+
+.hero-summary {
+  max-width: 58ch;
+  color: var(--muted);
+  margin-bottom: var(--space-6);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.hero-facts {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+}
+
+.hero-facts .fact {
+  min-width: 0;
+}
+
+.hero-facts dt {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero-facts dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+.hero-media {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.portrait {
+  position: relative;
+  margin: 0;
+}
+
+.portrait img {
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  object-fit: cover;
+  box-shadow: var(--shadow-sm);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Gentle scale, accent border, deeper shadow. No rotating borders or glow. */
+.portrait:hover img,
+.portrait:focus-within img {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.015);
+}
+
+.portrait figcaption {
+  margin-top: var(--space-3);
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.hero-badges .badge {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.75rem;
+}
+
+/* Each hero badge takes the next hue in the palette, so the focus areas read
+   as a colourful set rather than a grey list. */
+.hero-badges li:nth-child(6n + 1) {
+  --cat: var(--c-blue);
+  --cat-soft: var(--c-blue-soft);
+}
+
+.hero-badges li:nth-child(6n + 2) {
+  --cat: var(--c-teal);
+  --cat-soft: var(--c-teal-soft);
+}
+
+.hero-badges li:nth-child(6n + 3) {
+  --cat: var(--c-violet);
+  --cat-soft: var(--c-violet-soft);
+}
+
+.hero-badges li:nth-child(6n + 4) {
+  --cat: var(--c-amber);
+  --cat-soft: var(--c-amber-soft);
+}
+
+.hero-badges li:nth-child(6n + 5) {
+  --cat: var(--c-rose);
+  --cat-soft: var(--c-rose-soft);
+}
+
+.hero-badges li:nth-child(6n + 6) {
+  --cat: var(--c-green);
+  --cat-soft: var(--c-green-soft);
+}
+
+.hero-badges .badge {
+  border-color: var(--cat, var(--border));
+  background-color: var(--cat-soft, var(--surface-2));
+  color: var(--cat-text, var(--muted));
+  font-weight: 500;
+}
+
+/* The focus-area badges also carry a small colour dot. */
+.hero-badges .badge::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 0.4rem;
+  border-radius: 50%;
+  background-color: var(--cat, var(--muted));
+  vertical-align: middle;
+}
+
+/* ==========================================================================
+   8. ABOUT
+   ========================================================================== */
+
+.about-grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.stats {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  align-content: start;
+}
+
+.stat-card {
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--cat, var(--accent));
+  border-radius: var(--radius);
+  background-color: var(--surface);
+  background-image: linear-gradient(140deg, var(--cat-soft, var(--accent-soft)) 0%, transparent 65%);
+  box-shadow: var(--shadow-sm);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition);
+}
+
+.stat-card:hover {
+  transform: translateY(var(--lift));
+  box-shadow: var(--shadow-md);
+}
+
+.stat-value {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--cat, var(--accent));
+  overflow-wrap: anywhere;
+}
+
+.stat-label {
+  margin: var(--space-2) 0 var(--space-1);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.stat-note {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.highlight-grid {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-7);
+  grid-template-columns: 1fr;
+}
+
+.highlight {
+  padding: var(--space-4) 0 0;
+  border-top: 2px solid var(--cat, var(--accent));
+  transition: border-color var(--transition);
+}
+
+.highlight h3 {
+  margin-bottom: var(--space-2);
+  color: var(--cat, var(--text));
+  transition: color var(--transition);
+}
+
+.highlight p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.highlight:hover {
+  border-top-color: var(--cat, var(--accent-strong));
+}
+
+/* ==========================================================================
+   9. SKILLS + SKILL VISUALISATION
+   ========================================================================== */
+
+.skills-grid {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: 1fr;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tag-list li {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-2);
+  font-size: 0.8125rem;
+  color: var(--text);
+  transition:
+    border-color var(--transition),
+    background-color var(--transition),
+    color var(--transition);
+}
+
+/* Tags highlight when their card is hovered — keeps the accent at ~5%. */
+.card:hover .tag-list li {
+  border-color: var(--accent-line);
+}
+
+.tag-list-sm li {
+  font-size: 0.75rem;
+  padding: 0.22rem 0.5rem;
+  font-family: var(--font-mono);
+}
+
+.alert {
+  display: block;
+  margin: var(--space-4) 0 0;
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background-color: var(--accent-soft);
+  font-size: 0.85rem;
+}
+
+/* Skill levels: bar + always-visible text label (never colour alone) --- */
+/* ==========================================================================
+   SKILL LEVELS
+   ========================================================================== */
+
+.levels {
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* Skill level rows.
+   The working area stays a plain surface — a full-width pastel slab for every
+   row read as heavy banding. Colour is carried by a left accent rail, the
+   meter bar, and the chevron instead, which is far calmer to scan. */
+.level {
+  position: relative;
+  border: 1px solid transparent;
+  border-left: 3px solid var(--cat, var(--accent));
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  transition:
+    background-color var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.level:hover {
+  background-color: var(--surface);
+  border-color: var(--border);
+  border-left-color: var(--cat, var(--accent));
+}
+
+.level.is-open {
+  background-color: var(--surface);
+  border-color: var(--border);
+  border-left-color: var(--cat, var(--accent));
+  box-shadow: var(--shadow-sm);
+}
+
+.level-trigger {
+  display: grid;
+  gap: var(--space-2);
+  align-items: center;
+  width: 100%;
+  padding: var(--space-3) var(--space-3) var(--space-3) 2.25rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Chevron marker, rotated when the panel is open. Centred on the trigger's
+   first line box rather than pinned to a guessed offset. */
+.level-trigger::before {
+  content: "";
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -5px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(-45deg);
+  transition:
+    transform var(--transition),
+    border-color var(--transition);
+}
+
+.level.is-open .level-trigger::before {
+  transform: rotate(45deg);
+  margin-top: -2px;
+  border-color: var(--cat, var(--accent));
+}
+
+.level-name {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  /* Long names wrap rather than pushing the grid wider than the card. */
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.level-label {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  /* Wrap rather than overflow: long labels stay fully readable. */
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.level.is-open .level-name {
+  color: var(--accent);
+}
+
+.level-meter {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 8px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: var(--surface-3, var(--surface-2));
+  overflow: hidden;
+}
+
+/* Skill bars: solid category colour. The rows carry --cat from their colour
+   class, so each bar is one clean hue — never a blend into the shared blue. */
+.level-meter::after {
+  content: "";
+  display: block;
+  width: calc(var(--level-fill, 0) * 20%);
+  height: 100%;
+  background-color: var(--cat, var(--accent));
+  border-radius: var(--radius-pill);
+  transition: width 600ms ease;
+}
+
+/* Hover/open stays the same hue — only a whisper lighter, so it reads as
+   feedback rather than a colour change. */
+.level:hover .level-meter::after,
+.level.is-open .level-meter::after {
+  filter: brightness(1.12);
+}
+
+/* The open row takes its category hue. */
+.level.is-open {
+  border-color: var(--cat, var(--accent-line));
+}
+
+.level.is-open .level-name {
+  color: var(--cat, var(--accent));
+}
+
+.level.is-open .level-trigger::before {
+  border-color: var(--cat, var(--accent));
+}
+
+/* Fallback if a data-level value is missing or out of range. */
+.level-meter:not([data-level])::after {
+  width: 0;
+}
+
+/* Expandable detail panel --------------------------------------------- */
+.level-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.level.is-open .level-panel {
+  grid-template-rows: 1fr;
+}
+
+.level-panel-inner {
+  overflow: hidden;
+  padding-inline: var(--space-3);
+}
+
+.level-detail {
+  padding: 0 var(--space-2) var(--space-4) 2.25rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.level.is-open .level-detail {
+  opacity: 1;
+  transition-delay: 90ms;
+}
+
+.level-detail ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+/* Level detail tags use the row's soft tint with neutral text for contrast. */
+.level-detail li {
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--cat-soft, var(--surface-2));
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
+/* ==========================================================================
+   10. SERVICES
+   ========================================================================== */
+
+/* An accent rail down the left edge, plus the shared card hover. */
+.service-card {
+  border-left: 3px solid var(--border);
+}
+
+.service-card:hover,
+.service-card:focus-within {
+  border-left-color: var(--accent);
+}
+
+.service-card h3 {
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+  transition: color var(--transition);
+}
+
+/* The service title's rule belongs to the toggle button, so the card-level
+   rule is switched off to avoid a doubled line. */
+.service-card .service-toggle h3 {
+  border-bottom: 0;
+}
+
+.service-card:hover h3,
+.service-card:focus-within h3 {
+  color: var(--accent);
+}
+
+.service-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  transition: color var(--transition);
+}
+
+/* Description becomes slightly more prominent on hover. */
+.service-card:hover p,
+.service-card:focus-within p {
+  color: var(--text);
+}
+
+/* Extra detail, revealed by clicking the service title button. */
+.service-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.service-toggle::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg);
+  transition:
+    transform var(--transition),
+    border-color var(--transition);
+}
+
+.service-card.is-open .service-toggle::after {
+  transform: rotate(-135deg);
+  border-color: var(--accent);
+}
+
+/* The toggle carries the rule itself, so the h3 must NOT also draw one — two
+   adjacent borders produced a doubled 2px line under each service title. */
+.service-toggle h3 {
+  margin: 0;
+  padding: 0 0 var(--space-3);
+  border-bottom: 0;
+  flex: 1 1 auto;
+}
+
+.service-card .service-toggle {
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.service-detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.service-card.is-open .service-detail {
+  grid-template-rows: 1fr;
+}
+
+.service-detail > div {
+  overflow: hidden;
+}
+
+.service-detail p {
+  padding-top: var(--space-3);
+  margin: 0;
+  font-size: 0.875rem;
+  border-top: 1px dashed var(--border);
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.service-card.is-open .service-detail p {
+  opacity: 1;
+  transition-delay: 90ms;
+}
+
+/* ==========================================================================
+   11. PROJECTS
+   ========================================================================== */
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.chip {
+  min-height: 40px;
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background-color: var(--surface);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color var(--transition),
+    border-color var(--transition),
+    background-color var(--transition),
+    transform var(--transition);
+}
+
+.chip:hover {
+  color: var(--accent);
+  border-color: var(--accent-line);
+  transform: translateY(-1px);
+}
+
+.chip:active {
+  transform: translateY(1px);
+}
+
+.chip[aria-pressed="true"] {
+  background-color: var(--cat, var(--accent));
+  border-color: var(--cat, var(--accent));
+  color: var(--on-accent);
+  box-shadow: var(--shadow-accent);
+}
+
+/* Each filter chip previews the hue of the category it selects. */
+.chip[data-filter="all"] {
+  --cat: var(--accent);
+  --cat-soft: var(--accent-soft);
+}
+
+.chip[data-filter="hardware"] {
+  --cat: var(--c-blue);
+  --cat-soft: var(--c-blue-soft);
+}
+
+.chip[data-filter="software"] {
+  --cat: var(--c-teal);
+  --cat-soft: var(--c-teal-soft);
+}
+
+.chip[data-filter="web"] {
+  --cat: var(--c-violet);
+  --cat-soft: var(--c-violet-soft);
+}
+
+.chip[data-filter="networking"] {
+  --cat: var(--c-amber);
+  --cat-soft: var(--c-amber-soft);
+}
+
+.chip[data-filter="cybersecurity"] {
+  --cat: var(--c-rose);
+  --cat-soft: var(--c-rose-soft);
+}
+
+.chip:hover {
+  color: var(--cat, var(--accent));
+  border-color: var(--cat, var(--accent));
+  background-color: var(--cat-soft, var(--surface));
+  transform: translateY(-1px);
+}
+
+html[data-theme="dark"] .chip[aria-pressed="true"] {
+  color: #0f1319;
+}
+
+.filter-status {
+  margin: 0 0 var(--space-5);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Cards animate in and out of the grid instead of snapping. `.is-hiding` is
+   applied first, then `hidden` once the transition has finished, so the grid
+   never reflows mid-animation. */
+.project-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  animation: card-in 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.project-card.is-hiding {
+  opacity: 0;
+  transform: translateY(6px) scale(0.99);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+  pointer-events: none;
+}
+
+.project-card[hidden] {
+  display: none;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.project-category {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.project-desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* "View details" opens the project modal. Styled as a secondary button so it
+   is clearly a control, not an inline link. */
+.project-open {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  min-height: 40px;
+  margin-top: var(--space-1);
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    color var(--transition),
+    border-color var(--transition),
+    background-color var(--transition),
+    transform var(--transition);
+}
+
+.project-open::after {
+  content: "\2197";
+  font-size: 0.95em;
+  transition: transform var(--transition);
+}
+
+.project-open:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.project-open:hover::after {
+  transform: translate(2px, -2px);
+}
+
+.project-open:active {
+  transform: translateY(1px);
+}
+
+/* ==========================================================================
+   12. EXPERIENCE TIMELINE
+   ========================================================================== */
+
+.timeline {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: var(--space-5);
+  /* Gradient rail down the timeline, tinted in the accent hue. */
+  border-left: 2px solid var(--border);
+  border-image: linear-gradient(to bottom, var(--c-blue), var(--c-teal), var(--c-violet), var(--c-rose)) 1;
+}
+
+.timeline-marker {
+  position: absolute;
+  top: 6px;
+  left: -7px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--cat, var(--accent));
+  box-shadow: 0 0 0 3px var(--surface-2);
+}
+
+.timeline-body {
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--cat, var(--accent));
+  border-radius: var(--radius);
+  background-color: var(--surface);
+  background-image: linear-gradient(135deg, var(--cat-soft, transparent) 0%, transparent 55%);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition);
+}
+
+.timeline-body:hover {
+  transform: translateY(var(--lift));
+  box-shadow: var(--shadow-md);
+}
+
+.timeline-body h3 {
+  margin: var(--space-3) 0 var(--space-1);
+  color: var(--cat, var(--text));
+}
+
+.timeline-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin-bottom: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.timeline-sub {
+  margin: var(--space-4) 0 var(--space-2);
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.timeline-body ul {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.timeline-body ul li {
+  position: relative;
+  padding-left: var(--space-5);
+  font-size: 0.9375rem;
+}
+
+.timeline-body ul li::before {
+  content: "";
+  position: absolute;
+  top: 0.65em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--border-strong);
+}
+
+/* ==========================================================================
+   13. CERTIFICATIONS
+   ========================================================================== */
+
+.cert-card h3 {
+  margin: var(--space-3) 0 var(--space-2);
+  color: var(--cat, var(--text));
+}
+
+.cert-card {
+  border-top: 3px solid var(--cat, var(--accent));
+}
+
+.cert-card p:last-child {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.cert-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* ==========================================================================
+   14. TOOLS
+   ========================================================================== */
+
+.tool-card h3 {
+  margin-bottom: var(--space-4);
+  font-size: 1rem;
+  color: var(--cat, var(--accent));
+}
+
+/* Tool cards read as colourful category swatches. */
+.tool-card {
+  border-top: 3px solid var(--cat, var(--accent));
+}
+
+.tool-card .tag-list li {
+  background-color: var(--cat-soft, var(--surface-2));
+  border-color: var(--cat, var(--border));
+}
+
+/* ==========================================================================
+   15. WHY WORK WITH ME
+   ========================================================================== */
+
+.why-card h3 {
+  margin-bottom: var(--space-2);
+}
+
+.why-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* ==========================================================================
+   16. CONTACT + FORM
+   ========================================================================== */
+
+.contact-grid {
+  display: grid;
+  gap: var(--space-7);
+  align-items: start;
+}
+
+.contact-list {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.contact-list li {
+  display: grid;
+  gap: var(--space-1);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  min-width: 0;
+}
+
+.contact-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.contact-value {
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+.form-title {
+  margin-bottom: var(--space-5);
+}
+
+.form-field {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  position: relative;
+}
+
+.form-field label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: color var(--transition);
+}
+
+/* Label picks up the accent while its field is focused. */
+.form-field:focus-within label {
+  color: var(--accent);
+}
+
+.req {
+  color: var(--danger);
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0.7rem 2.4rem 0.7rem 0.85rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9375rem;
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    background-color var(--transition);
+}
+
+.form-field textarea {
+  resize: vertical;
+  min-height: 140px;
+  padding-right: 0.85rem;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* Success tick marker: an icon plus the field's own state, never colour alone. */
+.form-field .field-state {
+  position: absolute;
+  right: 0.8rem;
+  bottom: 0.85rem;
+  display: none;
+  width: 18px;
+  height: 18px;
+  color: var(--success);
+  pointer-events: none;
+}
+
+/* Shown only when JS has confirmed this field is filled and valid. */
+.form-field[data-state="valid"] .field-state {
+  display: block;
+}
+
+.form-field .field-state svg {
+  display: block;
+}
+
+.field-help {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.field-error {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--danger);
+}
+
+/* Invalid state: colour + border + message text (never colour alone). */
+.form-field input[aria-invalid="true"],
+.form-field textarea[aria-invalid="true"] {
+  border-color: var(--danger);
+  background-color: var(--danger-soft);
+}
+
+/* Field-level marker shown alongside a valid value (green tick + colour). */
+.form-field[data-state="valid"] input,
+.form-field[data-state="valid"] textarea {
+  border-color: var(--accent-line);
+}
+
+/* Textarea has no tick, so the success state is a border only there. */
+.form-field[data-state="valid"] textarea {
+  border-color: var(--border-strong);
+}
+
+.form-field input[aria-invalid="true"]:focus,
+.form-field textarea[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 3px var(--danger-soft);
+}
+
+/* Honeypot: removed from view but not from the DOM, so bots still fill it. */
+.hp-field {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.form-submit {
+  width: 100%;
+}
+
+.form-status {
+  margin: 0;
+  min-height: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.form-status.is-success {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.form-status.is-error {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   17. FOOTER + BACK TO TOP
+   ========================================================================== */
+
+.site-footer {
+  /* The rule is absolutely positioned against this box, so it takes part in no
+     layout at all: it can never push, pull, or overlap the footer content,
+     whatever the padding or content height happens to be. */
+  position: relative;
+  --footer-rule-h: 3px;
+  border-top: 1px solid var(--border);
+  background-color: var(--surface);
+  background-image:
+    radial-gradient(60% 80% at 90% 0%, var(--c-violet-soft), transparent 70%),
+    radial-gradient(50% 70% at 5% 100%, var(--c-blue-soft), transparent 72%);
+  padding-block: var(--space-6) var(--space-5);
+}
+
+/* Decorative tri-colour rule, pinned just inside the footer's top edge.
+   Absolutely positioned (inset: 0 0 auto 0) so it is removed from flow and
+   sits above the padding area — clear of the name, description, and links at
+   every breakpoint. The gradient and opacity are unchanged. */
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--footer-rule-h);
+  background: linear-gradient(
+    90deg,
+    var(--c-blue),
+    var(--c-teal),
+    var(--c-violet),
+    var(--c-amber),
+    var(--c-rose)
+  );
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.footer-grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.footer-name {
+  margin: 0 0 var(--space-2);
+  font-size: 1.0625rem;
+  font-weight: 650;
+}
+
+.footer-desc {
+  margin: 0;
+  max-width: 42ch;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.footer-heading {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.footer-nav ul {
+  display: grid;
+  gap: var(--space-2);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.footer-nav a,
+.social-list a {
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.footer-nav a:hover,
+.social-list a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* Social icons shift very slightly on hover instead of animating constantly. */
+.social-list a svg {
+  transition: transform var(--transition),
+    color var(--transition);
+}
+
+.social-list a:hover svg {
+  transform: translateY(-2px);
+}
+
+.site-footer {
+  background-image: linear-gradient(to bottom, var(--grid-line), transparent 160px);
+}
+
+.social-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.social-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-5);
+  margin-top: var(--space-7);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+  /* Keeps the links clear of the fixed back-to-top button on desktop, which
+     otherwise sits on top of the last link. */
+  padding-right: 3.5rem;
+}
+
+.footer-bottom p {
+  margin: 0;
+  /* Copyright hugs the left edge instead of stretching across the free space. */
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  flex: 0 0 auto;
+}
+
+.footer-links a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+  transition: color var(--transition), text-decoration-color var(--transition);
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+
+.back-to-top-wrap {
+  position: fixed;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  width: 48px;
+  height: 48px;
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition:
+    opacity var(--transition),
+    visibility var(--transition),
+    transform var(--transition);
+}
+
+.back-to-top-wrap.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.progress-ring {
+  position: absolute;
+  inset: 0;
+  width: 48px;
+  height: 48px;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.progress-track {
+  stroke: var(--border);
+}
+
+.progress-value {
+  stroke: var(--accent);
+  stroke-linecap: round;
+  stroke-dasharray: 119.4; /* 2 * PI * r (r = 19) */
+  stroke-dashoffset: 119.4;
+}
+
+.back-to-top {
+  position: absolute;
+  inset: 6px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background-color: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition:
+    color var(--transition),
+    border-color var(--transition),
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.back-to-top:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-accent);
+}
+
+.back-to-top:active {
+  transform: translateY(1px);
+}
+
+/* ==========================================================================
+   17b. SCROLL PROGRESS BAR + PROJECT MODAL
+   ========================================================================== */
+
+/* Very thin, fixed reading-progress line. Transform-only, so it costs nothing
+   on the compositor and never triggers layout. */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 60;
+  pointer-events: none;
+  background-color: transparent;
+}
+
+.scroll-progress span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.scroll-progress.is-active span {
+  opacity: 1;
+}
+
+/* --- Project modal ----------------------------------------------------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(8, 11, 16, 0.55);
+  backdrop-filter: blur(3px);
+  animation: modal-fade 200ms ease both;
+}
+
+.modal-panel {
+  position: relative;
+  width: min(720px, 100%);
+  max-height: min(86vh, 780px);
+  overflow-y: auto;
+  padding: var(--space-6);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background-color: var(--surface);
+  box-shadow: var(--shadow-lg);
+  animation: modal-rise 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes modal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    color var(--transition),
+    border-color var(--transition),
+    background-color var(--transition);
+}
+
+.modal-close:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.modal-category {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.modal-title {
+  margin: 0 var(--space-7) var(--space-4) 0;
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+}
+
+.modal-desc {
+  color: var(--muted);
+}
+
+.modal-details {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-5) 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-2);
+  font-size: 0.9rem;
+}
+
+.modal-details dt {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.modal-details dd {
+  margin: 0.15rem 0 0;
+}
+
+.modal-sub {
+  margin: var(--space-5) 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.modal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+}
+
+/* While the modal is open, the page behind it must not scroll. */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   18. SCROLL REVEAL (progressive enhancement — hidden only when JS is active)
+   ========================================================================== */
+
+.js-reveal {
+  opacity: 0;
+  transform: translateY(16px) scale(0.985);
+  transition:
+    opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.js-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ==========================================================================
+   19. RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+/* --- Large tablets / small laptops ------------------------------------ */
+@media (min-width: 700px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .highlight-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero-facts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* .footer-bottom is flex, so it needs no column template here. The links
+     group is already pushed right by justify-content: space-between. */
+  .footer-bottom {
+    align-items: center;
+  }
+
+  /* The level row becomes a three-column disclosure (name, meter, label).
+     The label column is `auto` so longer strings such as
+     "Beginner -> Intermediate" get the room they need instead of being clipped. */
+  .level-trigger {
+    grid-template-columns: minmax(160px, 1fr) minmax(120px, 1.6fr) minmax(150px, auto);
+    gap: var(--space-4);
+  }
+}
+
+/* On narrower desktop widths the three-column row gets tight, so the label
+   drops beneath the meter instead of being squeezed. */
+@media (min-width: 700px) and (max-width: 1080px) {
+  .level-trigger {
+    grid-template-columns: minmax(0, 1fr) minmax(120px, 1.4fr);
+  }
+
+  .level-label {
+    grid-column: 1 / -1;
+    margin-top: calc(var(--space-1) * -1);
+  }
+}
+
+@media (min-width: 700px) {
+  .form-submit {
+    width: auto;
+  }
+}
+
+/* --- Desktops --------------------------------------------------------- */
+@media (min-width: 960px) {
+  .section {
+    padding-block: 7rem;
+  }
+
+  .hero-grid {
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+    gap: var(--space-8);
+  }
+
+  .hero-media {
+    justify-items: start;
+  }
+
+  .about-grid {
+    grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr);
+    gap: var(--space-7);
+  }
+
+  .skills-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .highlight-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .tools-grid {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .contact-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+
+  .footer-grid {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+/* --- Wide screens ----------------------------------------------------- */
+@media (min-width: 1280px) {
+  .container {
+    width: min(1200px, 100% - 4rem);
+  }
+}
+
+/* --- Mobile navigation (max-width) ------------------------------------ */
+@media (max-width: 1023px) {
+  .nav-toggle {
+    display: grid;
+  }
+
+  .nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    padding: var(--space-3) var(--space-4) var(--space-5);
+    background-color: var(--surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    max-height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+  }
+
+  .nav.is-open {
+    display: block;
+  }
+
+  .nav-list {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-1);
+  }
+
+  .nav-link {
+    padding: 0.75rem 0.5rem;
+    font-size: 1rem;
+    border-radius: var(--radius-sm);
+  }
+
+  /* On mobile the nav is a modal panel: give it a solid backdrop. */
+  .site-header {
+    background-color: var(--surface);
+    backdrop-filter: none;
+  }
+}
+
+/* --- Small phones ----------------------------------------------------- */
+@media (max-width: 560px) {
+  .container {
+    width: min(1160px, 100% - 2rem);
+  }
+
+  .section {
+    padding-block: var(--space-8);
+  }
+
+  .brand-text small {
+    display: none;
+  }
+
+  .hero-actions .btn,
+  .hero-actions .btn-ghost {
+    flex: 1 1 100%;
+  }
+
+  .hero-actions .btn-ghost {
+    border: 1px solid var(--border);
+  }
+
+  .footer-nav ul {
+    grid-template-columns: 1fr;
+  }
+
+  /* On phones the back-to-top button is 48px wide and sits 1rem from the
+     bottom-right, so the footer links only need room to clear it. */
+  .footer-bottom {
+    padding-right: 0;
+    padding-bottom: 3.5rem;
+  }
+
+  .back-to-top-wrap {
+    right: var(--space-4);
+    bottom: var(--space-4);
+  }
+}
+
+/* ==========================================================================
+   MOBILE: STRIP DECORATION, KEEP FUNCTION
+   Background effects and hover-only behaviour are removed below 700px so the
+   phone experience is cleaner and lighter than the desktop one.
+   ========================================================================== */
+
+@media (max-width: 699px) {
+  /* No drifting glow, no blurred accent shape, no grid/dot textures. */
+  .hero::after,
+  .section--dots::before {
+    display: none;
+  }
+
+  .hero::before {
+    background-size: 40px 40px;
+  }
+
+  .section--accent-soft {
+    background-image: none;
+  }
+
+  /* Hover effects are meaningless on touch: keep the state feedback that is
+     reachable by tapping (open/expanded styling) and drop the rest. */
+  .card:hover,
+  .card:focus-within,
+  .stat-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card:hover::before,
+  .card:focus-within::before {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+
+  .service-card:hover {
+    border-left-color: var(--border);
+  }
+
+  .portrait:hover img {
+    transform: none;
+  }
+
+  /* Cards still animate in when filtering, but faster and without the shift. */
+  .project-card {
+    animation-duration: 260ms;
+  }
+
+  /* Keep the level disclosure comfortable to tap. */
+  .level-trigger {
+    padding-block: var(--space-4);
+  }
+
+  .modal-panel {
+    padding: var(--space-5);
+    max-height: 88vh;
+  }
+}
+
+/* ==========================================================================
+   ACCESSIBILITY HELPERS
+   ========================================================================== */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: var(--space-4);
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  background-color: var(--accent);
+  /* --on-accent flips to a dark ink in the dark theme, where the accent itself
+     becomes a light blue. Hard-coded #fff only cleared 2.48:1 there. */
+  color: var(--on-accent, #fff);
+  font-weight: 600;
+  text-decoration: none;
+  transition: top var(--transition);
+}
+
+.skip-link:focus {
+  top: 0;
+  color: var(--on-accent, #fff);
+}
+
+/* Consistent, highly visible focus outline for keyboard users. */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   Decorative movement is switched off entirely; every function still works.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .js-reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .level-meter::after {
+    transition: none;
+  }
+
+  /* The hero glow holds still rather than drifting. */
+  .hero::after {
+    animation: none;
+  }
+
+  /* No lift on hover: state is still communicated by border and shadow. */
+  .card:hover,
+  .card:focus-within,
+  .stat-card:hover,
+  .btn:hover,
+  .chip:hover {
+    transform: none;
+  }
+
+  .portrait:hover img,
+  .portrait:focus-within img {
+    transform: none;
+  }
+
+  .project-card {
+    animation: none;
+  }
+
+  .modal-panel,
+  .modal-backdrop {
+    animation: none;
+  }
+
+  /* Icon micro-motions are decoration only. */
+  .card:hover .card-icon svg,
+  .social-list a:hover svg {
+    transform: none;
+    animation: none;
+  }
+
+  /* Expand/collapse becomes an instant show/hide. */
+  .level-panel,
+  .service-detail,
+  .level-detail,
+  .service-detail p {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   PRINT
+   ========================================================================== */
+
+@media print {
+  .site-header,
+  .back-to-top-wrap,
+  .filter-bar,
+  .hero-actions,
+  .contact-form,
+  .skip-link {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .section {
+    padding-block: 1rem;
+    break-inside: avoid;
+  }
+}
